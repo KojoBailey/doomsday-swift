@@ -32,13 +32,16 @@ extension BinaryInteger {
 
 func getCenturyAnchor(_ century: UInt) -> Day {
     switch century.modulo(4) {
-    case 0: return .Wednesday
-    case 1: return .Tuesday
-    case 2: return .Sunday
-    case 3: return .Friday
+    case 0: .Wednesday
+    case 1: .Tuesday
+    case 2: .Sunday
+    case 3: .Friday
     default: fatalError("Unreachable")
     }
 }
+
+// func getYearAnchor(_ year: UInt) -> Day {
+// }
 
 @main
 struct doomsday {
