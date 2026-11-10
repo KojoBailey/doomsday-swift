@@ -75,3 +75,20 @@ import Testing
     #expect(parseDate("2026-13-29") == nil)
     #expect(parseDate("2026-00-29") == nil)
 }
+
+@Test func testOrdinalSuffix() async throws {
+    #expect(0.ordinalSuffix   == "th")
+    #expect(10.ordinalSuffix  == "th")
+    #expect(11.ordinalSuffix  == "th")
+    #expect(12.ordinalSuffix  == "th")
+    #expect(13.ordinalSuffix  == "th")
+    #expect(1.ordinalSuffix   == "st")
+    #expect(21.ordinalSuffix  == "st")
+    #expect(121.ordinalSuffix == "st")
+    #expect(2.ordinalSuffix   == "nd")
+    #expect(22.ordinalSuffix  == "nd")
+    #expect(122.ordinalSuffix == "nd")
+    #expect(3.ordinalSuffix   == "rd")
+    #expect(23.ordinalSuffix  == "rd")
+    #expect(123.ordinalSuffix == "rd")
+}

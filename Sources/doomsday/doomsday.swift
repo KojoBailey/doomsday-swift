@@ -8,12 +8,14 @@ extension BinaryInteger {
         self.modulo(divisor) == 0
     }
 
-    func getOrdinalSuffix() -> String {
-        switch self.modulo(10) {
-        case 1 : "st"
-        case 2 : "nd"
-        case 3 : "rd"
-        default: "th"
+    var ordinalSuffix: String {
+        if (11...13).contains(self.modulo(100)) { "th" } else {
+            switch self.modulo(10) {
+            case 1 : "st"
+            case 2 : "nd"
+            case 3 : "rd"
+            default: "th"
+            }
         }
     }
 }
@@ -201,15 +203,15 @@ struct doomsday {
             }
 
             let century = yearToCentury(date.year)
-            print("The century anchor for the \(century)\(century.getOrdinalSuffix()) century is "
+            print("The century anchor for the \(century)\(century.ordinalSuffix) century is "
                 + "\(calcCenturyAnchor(date.year)).")
             
             print("The dooms-weekday for \(date.year) is \(calcYearDoomsday(date.year)).")
             
             print("For \(date.month), its doomsday falls on the "
-                + "\(date.month.calcDoomsday(year: date.year))\(date.day.getOrdinalSuffix()).")
+                + "\(date.month.calcDoomsday(year: date.year))\(date.day.ordinalSuffix).")
 
-            print("Therefore, the \(date.day)\(date.day.getOrdinalSuffix()) of \(date.month), \(date.year) "
+            print("Therefore, the \(date.day)\(date.day.ordinalSuffix) of \(date.month), \(date.year) "
                 + "falls on a \(calcWeekday(date)).")
         }
     }
