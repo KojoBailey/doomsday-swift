@@ -30,7 +30,7 @@ extension BinaryInteger {
     }
 }
 
-func getCenturyAnchor(_ century: UInt) -> Day {
+func calcCenturyAnchor(_ century: UInt) -> Day {
     switch century.modulo(4) {
     case 0: .Wednesday
     case 1: .Tuesday
@@ -40,8 +40,8 @@ func getCenturyAnchor(_ century: UInt) -> Day {
     }
 }
 
-func getYearAnchor(_ year: UInt) -> Day {
-    getCenturyAnchor((year / 100) + 1)
+func calcYearAnchor(_ year: UInt) -> Day {
+    calcCenturyAnchor((year / 100) + 1)
 }
 
 @main

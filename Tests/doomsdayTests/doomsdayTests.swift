@@ -7,15 +7,15 @@ import Testing
 }
 
 @Test func testCenturyAnchor() async throws {
-    #expect(getCenturyAnchor(21) == .Tuesday)
-    #expect(getCenturyAnchor(20) == .Wednesday)
-    #expect(getCenturyAnchor(19) == .Friday)
-    #expect(getCenturyAnchor(18) == .Sunday)
+    #expect(calcCenturyAnchor(21) == .Tuesday)
+    #expect(calcCenturyAnchor(20) == .Wednesday)
+    #expect(calcCenturyAnchor(19) == .Friday)
+    #expect(calcCenturyAnchor(18) == .Sunday)
 }
 
 @Test func testYearAnchor() async throws {
-    #expect(getYearAnchor(2026) == getCenturyAnchor(21))
-    #expect(getYearAnchor(2000) == getCenturyAnchor(21))
-    #expect(getYearAnchor(1973) == getCenturyAnchor(20))
-    #expect(getYearAnchor(1843) == getCenturyAnchor(19))
+    #expect(calcYearAnchor(2026) == calcCenturyAnchor(21))
+    #expect(calcYearAnchor(2000) == calcCenturyAnchor(21))
+    #expect(calcYearAnchor(1973) == calcCenturyAnchor(20))
+    #expect(calcYearAnchor(1843) == calcCenturyAnchor(19))
 }
