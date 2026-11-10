@@ -1,26 +1,26 @@
-enum Day {
-    case Monday
-    case Tuesday
-    case Wednesday
-    case Thursday
-    case Friday
-    case Saturday
-    case Sunday
+enum Weekday: UInt {
+    case Monday    = 1
+    case Tuesday   = 2
+    case Wednesday = 3
+    case Thursday  = 4
+    case Friday    = 5
+    case Saturday  = 6
+    case Sunday    = 0
 }
 
-enum Month {
-    case January
-    case February
-    case March
-    case April
-    case May
-    case June
-    case July
-    case August
-    case September
-    case October
-    case November
-    case December
+enum Month: UInt {
+    case January   = 01
+    case February  = 02
+    case March     = 03
+    case April     = 04
+    case May       = 05
+    case June      = 06
+    case July      = 07
+    case August    = 08
+    case September = 09
+    case October   = 10
+    case November  = 11
+    case December  = 12
 }
 
 extension BinaryInteger {
