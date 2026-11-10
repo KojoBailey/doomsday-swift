@@ -30,7 +30,7 @@ extension BinaryInteger {
     }
 }
 
-func calcCenturyAnchor(_ century: UInt) -> Day {
+func calcCenturyAnchor(_ century: UInt) -> Weekday {
     switch century.modulo(4) {
     case 0: .Wednesday
     case 1: .Tuesday
@@ -40,8 +40,25 @@ func calcCenturyAnchor(_ century: UInt) -> Day {
     }
 }
 
-func calcYearAnchor(_ year: UInt) -> Day {
+func calcYearAnchor(_ year: UInt) -> Weekday {
     calcCenturyAnchor((year / 100) + 1)
+}
+
+extension Sequence where Element: Numeric {
+    func sum() -> Element {
+        reduce(0, +)
+    }
+}
+
+func calcYearDoomsday(_ year: UInt) -> Weekday {
+    let last2Digits = year.modulo(100)
+    let remainder = last2Digits.modulo(12) 
+    return Weekday(rawValue: [
+        calcYearAnchor(year).rawValue,
+        last2Digits / 12,
+        remainder,
+        remainder / 4,
+    ].sum().modulo(7))!
 }
 
 @main

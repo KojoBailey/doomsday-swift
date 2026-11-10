@@ -19,3 +19,9 @@ import Testing
     #expect(calcYearAnchor(1973) == calcCenturyAnchor(20))
     #expect(calcYearAnchor(1843) == calcCenturyAnchor(19))
 }
+
+@Test func testYearDoomsday() async throws {
+    #expect(calcYearDoomsday(2026) == .Saturday)
+    #expect(calcYearDoomsday(2006) == .Tuesday)
+    #expect(calcYearDoomsday(1973) == .Wednesday)
+}
