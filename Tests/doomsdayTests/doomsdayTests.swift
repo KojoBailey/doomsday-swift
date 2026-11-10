@@ -25,3 +25,20 @@ import Testing
     #expect(calcYearDoomsday(2006) == .Tuesday)
     #expect(calcYearDoomsday(1973) == .Wednesday)
 }
+
+@Test func testMonthDoomsday() async throws {
+    #expect(calcMonthDoomsday(.January,   year: 2000) == 04)
+    #expect(calcMonthDoomsday(.January,   year: 2001) == 03)
+    #expect(calcMonthDoomsday(.February,  year: 2000) == 29)
+    #expect(calcMonthDoomsday(.February,  year: 2001) == 28)
+    #expect(calcMonthDoomsday(.March,     year: 2000) == 14)
+    #expect(calcMonthDoomsday(.April,     year: 2000) == 04)
+    #expect(calcMonthDoomsday(.May,       year: 2000) == 09)
+    #expect(calcMonthDoomsday(.June,      year: 2000) == 06)
+    #expect(calcMonthDoomsday(.July,      year: 2000) == 11)
+    #expect(calcMonthDoomsday(.August,    year: 2000) == 08)
+    #expect(calcMonthDoomsday(.September, year: 2000) == 05)
+    #expect(calcMonthDoomsday(.October,   year: 2000) == 10)
+    #expect(calcMonthDoomsday(.November,  year: 2000) == 07)
+    #expect(calcMonthDoomsday(.December,  year: 2000) == 12)
+}

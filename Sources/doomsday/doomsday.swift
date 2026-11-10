@@ -28,6 +28,10 @@ extension BinaryInteger {
         let remainder = self % divisor
         return remainder < 0 ? remainder + divisor : remainder
     }
+
+    func isDivisibleBy(_ divisor: Self) -> Bool {
+        self.modulo(divisor) == 0
+    }
 }
 
 func calcCenturyAnchor(_ century: UInt) -> Weekday {
@@ -60,6 +64,30 @@ func calcYearDoomsday(_ year: UInt) -> Weekday {
         remainder / 4,
     ].sum().modulo(7))!
 }
+
+func calcMonthDoomsday(_ month: Month, year: UInt) -> UInt {
+    let isLeapYear = year.isDivisibleBy(4)
+    return switch month {
+    case .January  : if isLeapYear { 04 } else { 03 }
+    case .February : if isLeapYear { 29 } else { 28 }
+    case .March    : 14
+    case .April    : 04
+    case .May      : 09
+    case .June     : 06
+    case .July     : 11
+    case .August   : 08
+    case .September: 05
+    case .October  : 10
+    case .November : 07
+    case .December : 12
+    }
+}
+
+// func calcWeekday(year: UInt, month: Month, day: UInt) -> Weekday {
+//     return Weekday(rawValue: 
+//         day - 
+//     )!
+// }
 
 @main
 struct doomsday {
