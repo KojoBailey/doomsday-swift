@@ -26,7 +26,7 @@ enum Month: UInt {
 extension BinaryInteger {
     func modulo(_ divisor: Self) -> Self {
         let remainder = self % divisor
-        return remainder < 0 ? remainder + divisor : remainder
+        return if remainder < 0 { remainder + divisor } else { remainder }
     }
 
     func isDivisibleBy(_ divisor: Self) -> Bool {
