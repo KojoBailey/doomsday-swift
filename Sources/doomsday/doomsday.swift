@@ -1,3 +1,26 @@
+extension BinaryInteger {
+    func modulo(_ divisor: Self) -> Self {
+        let remainder = self % divisor
+        return if remainder < 0 { remainder + divisor } else { remainder }
+    }
+
+    func isDivisibleBy(_ divisor: Self) -> Bool {
+        self.modulo(divisor) == 0
+    }
+}
+
+extension UnsignedInteger {
+    func differenceFrom(_ x: Self) -> Self {
+        if self > x { self - x } else { x - self }
+    }
+}
+
+extension Sequence where Element: Numeric {
+    func sum() -> Element {
+        reduce(0, +)
+    }
+}
+
 enum Weekday: UInt {
     case Monday    = 1
     case Tuesday   = 2
@@ -41,17 +64,6 @@ enum Month: UInt {
     }
 }
 
-extension BinaryInteger {
-    func modulo(_ divisor: Self) -> Self {
-        let remainder = self % divisor
-        return if remainder < 0 { remainder + divisor } else { remainder }
-    }
-
-    func isDivisibleBy(_ divisor: Self) -> Bool {
-        self.modulo(divisor) == 0
-    }
-}
-
 func calcCenturyAnchor(_ century: UInt) -> Weekday {
     switch century.modulo(4) {
     case 0: .Wednesday
@@ -66,12 +78,6 @@ func calcYearAnchor(_ year: UInt) -> Weekday {
     calcCenturyAnchor((year / 100) + 1)
 }
 
-extension Sequence where Element: Numeric {
-    func sum() -> Element {
-        reduce(0, +)
-    }
-}
-
 func calcYearDoomsday(_ year: UInt) -> Weekday {
     let last2Digits = year.modulo(100)
     let remainder = last2Digits.modulo(12) 
@@ -83,13 +89,9 @@ func calcYearDoomsday(_ year: UInt) -> Weekday {
     ].sum().modulo(7))!
 }
 
-func difference(_ x: UInt, _ y: UInt) -> UInt {
-    if x == y { 0 } else { max(x, y) - min(x, y) }
-}
-
 func calcWeekday(year: UInt, month: Month, day: UInt) -> Weekday {
-    return Weekday(rawValue: 
-        (difference(day, month.calcDoomsday(year: year)) + calcYearDoomsday(year).rawValue).modulo(7)
+    Weekday(rawValue: 
+        (day.differenceFrom(month.calcDoomsday(year: year)) + calcYearDoomsday(year).rawValue).modulo(7)
     )!
 }
 
