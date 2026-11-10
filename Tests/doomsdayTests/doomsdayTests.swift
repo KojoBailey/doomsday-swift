@@ -27,18 +27,38 @@ import Testing
 }
 
 @Test func testMonthDoomsday() async throws {
-    #expect(calcMonthDoomsday(.January,   year: 2000) == 04)
-    #expect(calcMonthDoomsday(.January,   year: 2001) == 03)
-    #expect(calcMonthDoomsday(.February,  year: 2000) == 29)
-    #expect(calcMonthDoomsday(.February,  year: 2001) == 28)
-    #expect(calcMonthDoomsday(.March,     year: 2000) == 14)
-    #expect(calcMonthDoomsday(.April,     year: 2000) == 04)
-    #expect(calcMonthDoomsday(.May,       year: 2000) == 09)
-    #expect(calcMonthDoomsday(.June,      year: 2000) == 06)
-    #expect(calcMonthDoomsday(.July,      year: 2000) == 11)
-    #expect(calcMonthDoomsday(.August,    year: 2000) == 08)
-    #expect(calcMonthDoomsday(.September, year: 2000) == 05)
-    #expect(calcMonthDoomsday(.October,   year: 2000) == 10)
-    #expect(calcMonthDoomsday(.November,  year: 2000) == 07)
-    #expect(calcMonthDoomsday(.December,  year: 2000) == 12)
+    #expect(Month.January
+        .calcDoomsday(year: 2000) == 04)
+    #expect(Month.January
+        .calcDoomsday(year: 2001) == 03)
+    #expect(Month.February
+        .calcDoomsday(year: 2000) == 29)
+    #expect(Month.February
+        .calcDoomsday(year: 2001) == 28)
+    #expect(Month.March
+        .calcDoomsday(year: 2000) == 14)
+    #expect(Month.April
+        .calcDoomsday(year: 2000) == 04)
+    #expect(Month.May
+        .calcDoomsday(year: 2000) == 09)
+    #expect(Month.June
+        .calcDoomsday(year: 2000) == 06)
+    #expect(Month.July
+        .calcDoomsday(year: 2000) == 11)
+    #expect(Month.August
+        .calcDoomsday(year: 2000) == 08)
+    #expect(Month.September
+        .calcDoomsday(year: 2000) == 05)
+    #expect(Month.October
+        .calcDoomsday(year: 2000) == 10)
+    #expect(Month.November
+        .calcDoomsday(year: 2000) == 07)
+    #expect(Month.December
+        .calcDoomsday(year: 2000) == 12)
+}
+
+@Test func testWeekday() async throws {
+    #expect(calcWeekday(year: 2006, month: .July,     day: 17) == .Monday)
+    #expect(calcWeekday(year: 2009, month: .November, day: 20) == .Friday)
+    #expect(calcWeekday(year: 1978, month: .March,    day: 07) == .Tuesday)
 }

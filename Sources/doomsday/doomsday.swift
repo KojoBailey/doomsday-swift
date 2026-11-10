@@ -21,6 +21,24 @@ enum Month: UInt {
     case October   = 10
     case November  = 11
     case December  = 12
+
+    func calcDoomsday(year: UInt) -> UInt {
+        let isLeapYear = year.isDivisibleBy(4)
+        return switch self {
+        case .January  : if isLeapYear { 04 } else { 03 }
+        case .February : if isLeapYear { 29 } else { 28 }
+        case .March    : 14
+        case .April    : 04
+        case .May      : 09
+        case .June     : 06
+        case .July     : 11
+        case .August   : 08
+        case .September: 05
+        case .October  : 10
+        case .November : 07
+        case .December : 12
+        }
+    }
 }
 
 extension BinaryInteger {
@@ -65,29 +83,15 @@ func calcYearDoomsday(_ year: UInt) -> Weekday {
     ].sum().modulo(7))!
 }
 
-func calcMonthDoomsday(_ month: Month, year: UInt) -> UInt {
-    let isLeapYear = year.isDivisibleBy(4)
-    return switch month {
-    case .January  : if isLeapYear { 04 } else { 03 }
-    case .February : if isLeapYear { 29 } else { 28 }
-    case .March    : 14
-    case .April    : 04
-    case .May      : 09
-    case .June     : 06
-    case .July     : 11
-    case .August   : 08
-    case .September: 05
-    case .October  : 10
-    case .November : 07
-    case .December : 12
-    }
+func difference(_ x: UInt, _ y: UInt) -> UInt {
+    if x == y { 0 } else { max(x, y) - min(x, y) }
 }
 
-// func calcWeekday(year: UInt, month: Month, day: UInt) -> Weekday {
-//     return Weekday(rawValue: 
-//         day - 
-//     )!
-// }
+func calcWeekday(year: UInt, month: Month, day: UInt) -> Weekday {
+    return Weekday(rawValue: 
+        (difference(day, month.calcDoomsday(year: year)) + calcYearDoomsday(year).rawValue).modulo(7)
+    )!
+}
 
 @main
 struct doomsday {
