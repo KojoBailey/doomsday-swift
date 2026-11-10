@@ -7,6 +7,15 @@ extension BinaryInteger {
     func isDivisibleBy(_ divisor: Self) -> Bool {
         self.modulo(divisor) == 0
     }
+
+    func getOrdinalSuffix() -> String {
+        switch self.modulo(10) {
+        case 1 : "st"
+        case 2 : "nd"
+        case 3 : "rd"
+        default: "th"
+        }
+    }
 }
 
 extension UnsignedInteger {
@@ -98,8 +107,12 @@ func calcCenturyAnchor(_ century: UInt) -> Weekday {
     }
 }
 
+func yearToCentury(_ year: UInt) -> UInt {
+    (year / 100) + 1
+}
+
 func calcYearAnchor(_ year: UInt) -> Weekday {
-    calcCenturyAnchor((year / 100) + 1)
+    calcCenturyAnchor(yearToCentury(year))
 }
 
 func calcYearDoomsday(_ year: UInt) -> Weekday {
@@ -186,7 +199,18 @@ struct doomsday {
                 print("Invalid date format. Try again with YYYY-MM-DD.")
                 continue
             }
-            print("That date falls on a \(calcWeekday(date)).")
+
+            let century = yearToCentury(date.year)
+            print("The century anchor for the \(century)\(century.getOrdinalSuffix()) century is "
+                + "\(calcCenturyAnchor(date.year)).")
+            
+            print("The dooms-weekday for \(date.year) is \(calcYearDoomsday(date.year)).")
+            
+            print("For \(date.month), its doomsday falls on the "
+                + "\(date.month.calcDoomsday(year: date.year))\(date.day.getOrdinalSuffix()).")
+
+            print("Therefore, the \(date.day)\(date.day.getOrdinalSuffix()) of \(date.month), \(date.year) "
+                + "falls on a \(calcWeekday(date)).")
         }
     }
 }
