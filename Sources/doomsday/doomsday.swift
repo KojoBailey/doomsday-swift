@@ -27,7 +27,7 @@ extension UnsignedInteger {
 }
 
 extension Sequence where Element: Numeric {
-    func sum() -> Element {
+    var sum: Element {
         reduce(0, +)
     }
 }
@@ -39,7 +39,7 @@ extension String {
 }
 
 extension Character {
-    func toUInt() -> UInt? {
+    var uint: UInt? {
         switch self {
         case "0": 0
         case "1": 1
@@ -125,7 +125,7 @@ func calcYearDoomsday(_ year: UInt) -> Weekday {
         last2Digits / 12,
         remainder,
         remainder / 4,
-    ].sum().modulo(7))!
+    ].sum.modulo(7))!
 }
 
 struct Date: Equatable {
@@ -157,16 +157,16 @@ func parseDate(_ date: String) -> Date? {
         return nil
     }
 
-    let year: UInt = (date[0].toUInt()! * 1000)
-        + (date[1].toUInt()! * 100)
-        + (date[2].toUInt()! * 10)
-        + date[3].toUInt()!
-    let monthIndex = (date[5].toUInt()! * 10) + date[6].toUInt()!
+    let year: UInt = (date[0].uint! * 1000)
+        + (date[1].uint! * 100)
+        + (date[2].uint! * 10)
+        + date[3].uint!
+    let monthIndex = (date[5].uint! * 10) + date[6].uint!
     if monthIndex == 0 || monthIndex > 12 {
         return nil
     }
     let month = Month(rawValue: monthIndex)!
-    let day: UInt = (date[8].toUInt()! * 10) + date[9].toUInt()!
+    let day: UInt = (date[8].uint! * 10) + date[9].uint!
     if day == 0 {
         return nil
     }
