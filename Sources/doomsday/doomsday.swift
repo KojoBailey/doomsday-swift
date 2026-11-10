@@ -40,12 +40,12 @@ func getCenturyAnchor(_ century: UInt) -> Day {
     }
 }
 
-// func getYearAnchor(_ year: UInt) -> Day {
-// }
+func getYearAnchor(_ year: UInt) -> Day {
+    getCenturyAnchor((year / 100) + 1)
+}
 
 @main
 struct doomsday {
     static func main() {
-        print(getCenturyAnchor(21))
     }
 }
