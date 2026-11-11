@@ -1,5 +1,9 @@
 # Swift Doomsday
-Conway's Doomsday algorithm, implemented in Swift.
+This is a fun little project that implements John Conway's [Doomsday algorithm](https://en.wikipedia.org/wiki/Doomsday_rule) using Swift, mostly as an excuse for my first project in Swift outside of Xcode.
+
+I originally implemented this idea in [Haskell](https://github.com/KojoBailey/doomsday-hs), but switched to Swift because it scales a lot better in terms of code architecture and niceties.
+
+My aim is to make the most out of Swift's features to write as clean code as is not too tedious to set up. In particular, I'm writing Swift with languages like C++, C#, Mojo, and Rust in mind for comparison.
 
 ## Example Output
 > [!NOTE]
