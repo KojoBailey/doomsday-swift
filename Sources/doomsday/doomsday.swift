@@ -202,7 +202,7 @@ func parseDate(_ date: String) throws -> Date {
 struct doomsday {
     static func main() {
         while true {
-            print("Enter a date (YYYY-MM-DD): ", terminator: "")
+            print("Enter a date [YYYY-MM-DD]: ", terminator: "")
             guard let userResponse = readLine() else { break }
 
             let date: Date
@@ -212,17 +212,18 @@ struct doomsday {
                 print("Invalid date format. Reason: \(error)")
                 continue
             }
+            let (year, month, day) = (date.year, date.month, date.day)
 
-            let century = yearToCentury(date.year)
+            let century = yearToCentury(year)
             print("The century anchor for the \(century)\(century.ordinalSuffix) century is "
-                + "\(calcCenturyAnchor(date.year)).")
+                + "\(calcCenturyAnchor(year)).")
             
-            print("The dooms-weekday for \(date.year) is \(calcYearDoomsday(date.year)).")
+            print("The dooms-weekday for \(year) is \(calcYearDoomsday(year)).")
             
-            print("For \(date.month), its doomsday falls on the "
-                + "\(date.month.calcDoomsday(year: date.year))\(date.day.ordinalSuffix).")
+            print("For \(month), its doomsday falls on the "
+                + "\(month.calcDoomsday(year: year))\(day.ordinalSuffix).")
 
-            print("Therefore, the \(date.day)\(date.day.ordinalSuffix) of \(date.month), \(date.year) "
+            print("Therefore, the \(day)\(day.ordinalSuffix) of \(month), \(year) "
                 + "falls on a \(calcWeekday(date)).")
         }
     }
