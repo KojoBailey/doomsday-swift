@@ -64,16 +64,16 @@ import Testing
 }
 
 @Test func testParseDate() async throws {
-    #expect(parseDate("2006-07-17") == Date(year: 2006, month: .July,     day: 17))
-    #expect(parseDate("2009-11-20") == Date(year: 2009, month: .November, day: 20))
-    #expect(parseDate("1978-03-07") == Date(year: 1978, month: .March,    day: 07))
-    #expect(parseDate("2026-02-28") == Date(year: 2026, month: .February, day: 28))
-    #expect(parseDate("2026-02-29") == nil)
-    #expect(parseDate("2024-02-29") == Date(year: 2024, month: .February, day: 29))
-    #expect(parseDate("2026-11-31") == nil)
-    #expect(parseDate("2026-12-00") == nil)
-    #expect(parseDate("2026-13-29") == nil)
-    #expect(parseDate("2026-00-29") == nil)
+    #expect(try parseDate("2006-07-17") == Date(year: 2006, month: .July,     day: 17))
+    #expect(try parseDate("2009-11-20") == Date(year: 2009, month: .November, day: 20))
+    #expect(try parseDate("1978-03-07") == Date(year: 1978, month: .March,    day: 07))
+    #expect(try parseDate("2026-02-28") == Date(year: 2026, month: .February, day: 28))
+    #expect(throws: ErrorString.self) { try parseDate("2026-02-29") }
+    #expect(try parseDate("2024-02-29") == Date(year: 2024, month: .February, day: 29))
+    #expect(throws: ErrorString.self) { try parseDate("2026-11-31") }
+    #expect(throws: ErrorString.self) { try parseDate("2026-12-00") }
+    #expect(throws: ErrorString.self) { try parseDate("2026-13-29") }
+    #expect(throws: ErrorString.self) { try parseDate("2026-00-29") }
 }
 
 @Test func testOrdinalSuffix() async throws {

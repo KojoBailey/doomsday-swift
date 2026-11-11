@@ -144,46 +144,53 @@ func calcWeekday(_ date: Date) -> Weekday {
     calcWeekday(year: date.year, month: date.month, day: date.day)
 }
 
-func parseDate(_ date: String) -> Date? {
-    if date.count != 10 {
-        return nil
-    }
-    for i in [0,1,2,3,5,6,8,9] {
-        if !(date[i].isASCII && date[i].isNumber) {
-            return nil
-        }
-    }
-    if !(date[4] == "-" && date[7] == "-") {
-        return nil
-    }
+struct ErrorString: Error, CustomStringConvertible {
+    let description: String
+    init(_ description: String) { self.description = description }
+}
 
-    let year: UInt = (date[0].uint! * 1000)
-        + (date[1].uint! * 100)
-        + (date[2].uint! * 10)
-        + date[3].uint!
-    let monthIndex = (date[5].uint! * 10) + date[6].uint!
-    if monthIndex == 0 || monthIndex > 12 {
-        return nil
-    }
+func parseDate(_ date: String) throws -> Date {
+    guard date.count == 10 else {
+        throw ErrorString("Expected 10 chars, but got \(date.count).") }
+    guard [4,7].allSatisfy({ date[$0] == "-" }) else {
+        throw ErrorString("Hyphens (-) are not used to separate fields correctly.") }
+
+    let yearDigits = date.prefix(4).compactMap(\.uint)
+    guard yearDigits.count == 4 else {
+        throw ErrorString("Year is invalid. Should be of format YYYY with 4 digits.") }
+    let year: UInt = yearDigits.reduce(0) { acc, x in acc * 10 + x }
+
+    let monthDigits = date.dropFirst(5).prefix(2).compactMap(\.uint)
+    guard monthDigits.count == 2 else {
+        throw ErrorString("Month is invalid. Should be of format MM with 2 digits.") }
+    let monthIndex = monthDigits.reduce(0) { acc, x in acc * 10 + x }
+    guard monthIndex >= 1 && monthIndex <= 12 else {
+        throw ErrorString("Month is out of bounds. Should be between 01 and 12.") }
     let month = Month(rawValue: monthIndex)!
-    let day: UInt = (date[8].uint! * 10) + date[9].uint!
-    if day == 0 {
-        return nil
-    }
+
+    let dayDigits = date.dropFirst(8).prefix(2).compactMap(\.uint)
+    guard dayDigits.count == 2 else {
+        throw ErrorString("Day is invalid. Should be of format DD with 2 digits.") }
+    let day = dayDigits.reduce(0) { acc, x in acc * 10 + x }
+    guard day != 0 else {
+        throw ErrorString("Day cannot be 00.") }
     switch month {
     case .January, .March, .May, .July, .August, .October, .December:
-        if day > 31 {
-            return nil
-        }
+        guard day <= 31 else {
+            throw ErrorString("\(month) has at most 31 days.") }
     case .April, .June, .September, .November:
-        if day > 30 {
-            return nil
-        }
+        guard day <= 30 else {
+            throw ErrorString("\(month) has at most 30 days.") }
     case .February:
-        if (year.isDivisibleBy(4) && day > 29) || (!year.isDivisibleBy(4) && day > 28) {
-            return nil
+        if year.isDivisibleBy(4) {
+            guard day <= 29 else {
+                throw ErrorString("\(month) on a leap year has at most 29 days.") }
+        } else {
+            guard day <= 28 else {
+                throw ErrorString("\(month) on a non-leap year has at most 28 days.") }
         }
     }
+
     return Date(
         year: year,
         month: month,
@@ -197,8 +204,12 @@ struct doomsday {
         while true {
             print("Enter a date (YYYY-MM-DD): ", terminator: "")
             guard let userResponse = readLine() else { break }
-            guard let date = parseDate(userResponse) else {
-                print("Invalid date format. Try again with YYYY-MM-DD.")
+
+            let date: Date
+            do {
+                date = try parseDate(userResponse)
+            } catch {
+                print("Invalid date format. Reason: \(error)")
                 continue
             }
 
