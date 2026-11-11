@@ -216,7 +216,7 @@ struct doomsday {
 
             let century = yearToCentury(year)
             print("The century anchor for the \(century)\(century.ordinalSuffix) century is "
-                + "\(calcCenturyAnchor(year)).")
+                + "\(calcYearAnchor(year)).")
             
             print("The dooms-weekday for \(year) is \(calcYearDoomsday(year)).")
             
