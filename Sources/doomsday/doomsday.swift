@@ -18,6 +18,10 @@ extension BinaryInteger {
             }
         }
     }
+
+    var ordinal: String {
+        "\(self)\(ordinalSuffix)"
+    }
 }
 
 extension UnsignedInteger {
@@ -132,7 +136,9 @@ struct Date: Equatable {
     let year: UInt
     let month: Month
     let day: UInt
+}
 
+extension Date {
     init(_ string: String) throws {
         guard string.count == 10 else {
             throw ErrorString("Expected 10 chars, but got \(string.count).") }
@@ -197,7 +203,7 @@ func printSteps(date: Date) {
 
     let century = yearToCentury(year)
     let yearAnchor = calcYearAnchor(year)
-    print("The century anchor for the \(century)\(century.ordinalSuffix) century is "
+    print("The century anchor for the \(century.ordinal) century is "
         + "\(yearAnchor.rawValue) -> \(yearAnchor).")
 
     print()
@@ -211,7 +217,7 @@ func printSteps(date: Date) {
     print("\t4. rem / 4 = \(remainder) / 4 = \(remainder / 4)")
     let sum = yearAnchor.rawValue + (last2Digits / 12) + remainder + (remainder / 4)
     print("\tsum = \(yearAnchor.rawValue) + \(last2Digits / 12) + \(remainder) + \(remainder / 4) = \(sum)")
-    let yearDoomsday: Weekday = calcYearDoomsday(year)
+    let yearDoomsday = calcYearDoomsday(year)
     print("\tsum % 7 = \(sum) % 7 = \(yearDoomsday.rawValue) -> \(yearDoomsday)")
 
     print()
@@ -219,7 +225,7 @@ func printSteps(date: Date) {
     let monthDoomsdate = month.calcDoomsday(year: year)
     let mnemonic = "\(month.rawValue)/\(monthDoomsdate)"
     print("For \(month), its mnemonic \(mnemonic) tells us its doomsday falls on \(yearDoomsday) the "
-        + "\(monthDoomsdate)\(monthDoomsdate.ordinalSuffix).")
+        + "\(monthDoomsdate.ordinal).")
 
     print()
 
@@ -237,7 +243,7 @@ func printSteps(date: Date) {
 
     print()
 
-    print("Therefore, the \(day)\(day.ordinalSuffix) of \(month), \(year) "
+    print("Therefore, the \(day.ordinal) of \(month), \(year) "
         + "falls on a \(calcWeekday(date)).")
 }
 

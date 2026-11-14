@@ -63,17 +63,17 @@ import Testing
     #expect(calcWeekday(year: 1978, month: .March,    day: 07) == .Tuesday)
 }
 
-@Test func testParseDate() async throws {
-    #expect(try parseDate("2006-07-17") == Date(year: 2006, month: .July,     day: 17))
-    #expect(try parseDate("2009-11-20") == Date(year: 2009, month: .November, day: 20))
-    #expect(try parseDate("1978-03-07") == Date(year: 1978, month: .March,    day: 07))
-    #expect(try parseDate("2026-02-28") == Date(year: 2026, month: .February, day: 28))
-    #expect(throws: ErrorString.self) { try parseDate("2026-02-29") }
-    #expect(try parseDate("2024-02-29") == Date(year: 2024, month: .February, day: 29))
-    #expect(throws: ErrorString.self) { try parseDate("2026-11-31") }
-    #expect(throws: ErrorString.self) { try parseDate("2026-12-00") }
-    #expect(throws: ErrorString.self) { try parseDate("2026-13-29") }
-    #expect(throws: ErrorString.self) { try parseDate("2026-00-29") }
+@Test func testDateFromString() async throws {
+    #expect(try Date("2006-07-17") == Date(year: 2006, month: .July,     day: 17))
+    #expect(try Date("2009-11-20") == Date(year: 2009, month: .November, day: 20))
+    #expect(try Date("1978-03-07") == Date(year: 1978, month: .March,    day: 07))
+    #expect(try Date("2026-02-28") == Date(year: 2026, month: .February, day: 28))
+    #expect(throws: ErrorString.self) { try Date("2026-02-29") }
+    #expect(try Date("2024-02-29") == Date(year: 2024, month: .February, day: 29))
+    #expect(throws: ErrorString.self) { try Date("2026-11-31") }
+    #expect(throws: ErrorString.self) { try Date("2026-12-00") }
+    #expect(throws: ErrorString.self) { try Date("2026-13-29") }
+    #expect(throws: ErrorString.self) { try Date("2026-00-29") }
 }
 
 @Test func testOrdinalSuffix() async throws {
@@ -91,4 +91,21 @@ import Testing
     #expect(3.ordinalSuffix   == "rd")
     #expect(23.ordinalSuffix  == "rd")
     #expect(123.ordinalSuffix == "rd")
+}
+
+@Test func testOrdinal() async throws {
+    #expect(0.ordinal   == "0th")
+    #expect(10.ordinal  == "10th")
+    #expect(11.ordinal  == "11th")
+    #expect(12.ordinal  == "12th")
+    #expect(13.ordinal  == "13th")
+    #expect(1.ordinal   == "1st")
+    #expect(21.ordinal  == "21st")
+    #expect(121.ordinal == "121st")
+    #expect(2.ordinal   == "2nd")
+    #expect(22.ordinal  == "22nd")
+    #expect(122.ordinal == "122nd")
+    #expect(3.ordinal   == "3rd")
+    #expect(23.ordinal  == "23rd")
+    #expect(123.ordinal == "123rd")
 }
