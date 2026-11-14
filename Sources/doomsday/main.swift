@@ -85,53 +85,49 @@ struct ErrorString: Error, CustomStringConvertible {
     init(_ description: String) { self.description = description }
 }
 
-func printSteps(date: Date) {
+func produceSteps(date: Date) -> [[String]] {
+    var paragraphs = [[String]]()
+
     let (year, month, day) = (date.year, date.month, date.day)
 
     let century = yearToCentury(year)
     let yearAnchor = calcYearAnchor(year)
-    print("The century anchor for the \(century.ordinal) century is "
-        + "\(yearAnchor.rawValue) -> \(yearAnchor).")
+    paragraphs.append(["The century anchor for the \(century.ordinal) century is "
+        + "\(yearAnchor.rawValue) -> \(yearAnchor)."])
 
-    print()
-
-    print("The dooms-weekday for \(year) can be calculated with the sum of 4 components:")
-    print("\t1. century anchor = \(yearAnchor.rawValue)")
+    var lines = [String]()
+    lines.append("The dooms-weekday for \(year) can be calculated with the sum of 4 components:")
+    lines.append("\t1. century anchor = \(yearAnchor.rawValue)")
     let last2Digits = year.modulo(100)
-    print("\t2. yy = \(year) % 100 = \(last2Digits) => yy / 12 = \(last2Digits) / 12 = \(last2Digits / 12)")
+    lines.append("\t2. yy = \(year) % 100 = \(last2Digits) => yy / 12 = \(last2Digits) / 12 = \(last2Digits / 12)")
     let remainder = last2Digits % 12
-    print("\t3. rem = yy % 12 = \(last2Digits) % 12 = \(remainder)")
-    print("\t4. rem / 4 = \(remainder) / 4 = \(remainder / 4)")
+    lines.append("\t3. rem = yy % 12 = \(last2Digits) % 12 = \(remainder)")
+    lines.append("\t4. rem / 4 = \(remainder) / 4 = \(remainder / 4)")
     let sum = yearAnchor.rawValue + (last2Digits / 12) + remainder + (remainder / 4)
-    print("\tsum = \(yearAnchor.rawValue) + \(last2Digits / 12) + \(remainder) + \(remainder / 4) = \(sum)")
+    lines.append("\tsum = \(yearAnchor.rawValue) + \(last2Digits / 12) + \(remainder) + \(remainder / 4) = \(sum)")
     let yearDoomsday = calcYearDoomsday(year)
-    print("\tsum % 7 = \(sum) % 7 = \(yearDoomsday.rawValue) -> \(yearDoomsday)")
-
-    print()
+    lines.append("\tsum % 7 = \(sum) % 7 = \(yearDoomsday.rawValue) -> \(yearDoomsday)")
+    paragraphs.append(lines)
 
     let monthDoomsdate = month.calcDoomsday(year: year)
     let mnemonic = "\(month.rawValue)/\(monthDoomsdate)"
-    print("For \(month), its mnemonic \(mnemonic) tells us its doomsday falls on \(yearDoomsday) the "
-        + "\(monthDoomsdate.ordinal).")
-
-    print()
+    paragraphs.append(["For \(month), its mnemonic \(mnemonic) tells us its doomsday falls on \(yearDoomsday) the "
+        + "\(monthDoomsdate.ordinal)."])
 
     let difference = day.differenceFrom(monthDoomsdate)
-    print("Taking the difference from the doomsday, we get "
-        + "\(max(day, monthDoomsdate)) - \(min(day, monthDoomsdate)) = \(difference).")
-
-    print()
+    paragraphs.append(["Taking the difference from the doomsday, we get "
+        + "\(max(day, monthDoomsdate)) - \(min(day, monthDoomsdate)) = \(difference)."])
 
     let daySum = difference + yearDoomsday.rawValue
     let weekdayIndex = daySum % 7
-    print("The doomsday is a \(yearDoomsday) -> \(yearDoomsday.rawValue), so "
+    paragraphs.append(["The doomsday is a \(yearDoomsday) -> \(yearDoomsday.rawValue), so "
         + "\(difference) + \(yearDoomsday.rawValue) = \(daySum) and "
-        + "\(daySum) % 7 = \(weekdayIndex) -> \(Weekday(rawValue: weekdayIndex)!).")
+        + "\(daySum) % 7 = \(weekdayIndex) -> \(Weekday(rawValue: weekdayIndex)!)."])
 
-    print()
+    paragraphs.append(["Therefore, the \(day.ordinal) of \(month), \(year) "
+        + "falls on a \(calcWeekday(date))."])
 
-    print("Therefore, the \(day.ordinal) of \(month), \(year) "
-        + "falls on a \(calcWeekday(date)).")
+    return paragraphs
 }
 
 @main
@@ -156,7 +152,10 @@ struct doomsday {
             }
 
             print()
-            printSteps(date: date)
+            for paragraph in produceSteps(date: date) {
+                paragraph.forEach { print($0) }
+                print()
+            }
             print()
         }
     }
