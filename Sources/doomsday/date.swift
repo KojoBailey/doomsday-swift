@@ -1,3 +1,8 @@
+struct ErrorString: Error, CustomStringConvertible {
+    let description: String
+    init(_ description: String) { self.description = description }
+}
+
 struct Date: Equatable {
     let year: UInt
     let month: Month

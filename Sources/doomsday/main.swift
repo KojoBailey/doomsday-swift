@@ -92,11 +92,6 @@ func calcWeekday(_ date: Date) -> Weekday {
     calcWeekday(year: date.year, month: date.month, day: date.day)
 }
 
-struct ErrorString: Error, CustomStringConvertible {
-    let description: String
-    init(_ description: String) { self.description = description }
-}
-
 func produceSteps(date: Date) -> [[String]] {
     let (year, month, day) = (date.year, date.month, date.day)
     let century = yearToCentury(year)
