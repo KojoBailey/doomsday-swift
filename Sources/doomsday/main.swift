@@ -22,7 +22,7 @@ enum Month: UInt {
     case November  = 11
     case December  = 12
 
-    func calcDoomsday(year: UInt) -> UInt {
+    func calcDoomsdate(year: UInt) -> UInt {
         let isLeapYear = year.isDivisibleBy(4)
         return switch self {
         case .January  : if isLeapYear { 04 } else { 03 }
@@ -59,20 +59,32 @@ func calcYearAnchor(_ year: UInt) -> Weekday {
     calcCenturyAnchor(yearToCentury(year))
 }
 
-func calcYearDoomsday(_ year: UInt) -> Weekday {
-    let last2Digits = year.modulo(100)
-    let remainder = last2Digits.modulo(12) 
-    return Weekday(rawValue: [
-        calcYearAnchor(year).rawValue,
+func calcYearDoomsdaySteps(_ year: UInt)
+    -> (last2Digits: UInt, remainder: UInt, sum: UInt, result: Weekday)
+{
+    let last2Digits: UInt = year.modulo(100)
+    let remainder: UInt = last2Digits.modulo(12) 
+    let sum: UInt = [calcYearAnchor(year).rawValue,
         last2Digits / 12,
         remainder,
         remainder / 4,
-    ].sum.modulo(7))!
+    ].sum
+    let result = Weekday(rawValue: sum.modulo(7))!
+    return (
+        last2Digits: last2Digits,
+        remainder: remainder,
+        sum: sum,
+        result: result,
+    )
+}
+
+func calcYearDoomsday(_ year: UInt) -> Weekday {
+    calcYearDoomsdaySteps(year).result
 }
 
 func calcWeekday(year: UInt, month: Month, day: UInt) -> Weekday {
     Weekday(rawValue: 
-        (day.differenceFrom(month.calcDoomsday(year: year)) + calcYearDoomsday(year).rawValue).modulo(7)
+        (day.differenceFrom(month.calcDoomsdate(year: year)) + calcYearDoomsday(year).rawValue).modulo(7)
     )!
 }
 
@@ -86,57 +98,52 @@ struct ErrorString: Error, CustomStringConvertible {
 }
 
 func produceSteps(date: Date) -> [[String]] {
-    var paragraphs = [[String]]()
-
     let (year, month, day) = (date.year, date.month, date.day)
-
     let century = yearToCentury(year)
     let yearAnchor = calcYearAnchor(year)
-    paragraphs.append([
-        "The century anchor for the \(century.ordinal) century is \(yearAnchor.rawValue) -> \(yearAnchor).",
-    ])
+    let (
+        last2Digits,
+        remainder,
+        sum,
+        doomsday
+    ) = calcYearDoomsdaySteps(year)
+    let doomsdate = month.calcDoomsdate(year: year)
+    let mnemonic = "\(month.rawValue)/\(doomsdate)"
+    let difference = day.differenceFrom(doomsdate)
+    let daySum = difference + doomsday.rawValue
+    let weekdayIndex = daySum.modulo(7)
 
-    let last2Digits = year.modulo(100)
-    let remainder = last2Digits % 12
-    let sum = yearAnchor.rawValue + (last2Digits / 12) + remainder + (remainder / 4)
-    let yearDoomsday = calcYearDoomsday(year)
-    paragraphs.append([
-        "The dooms-weekday for \(year) can be calculated with the sum of 4 components:",
-        "\t1. century anchor = \(yearAnchor.rawValue)",
-        "\t2. yy = \(year) % 100 = \(last2Digits) => yy / 12 = \(last2Digits) / 12 = \(last2Digits / 12)",
-        "\t3. rem = yy % 12 = \(last2Digits) % 12 = \(remainder)",
-        "\t4. rem / 4 = \(remainder) / 4 = \(remainder / 4)",
-        "\tsum = \(yearAnchor.rawValue) + \(last2Digits / 12) + \(remainder) + \(remainder / 4) = \(sum)",
-        "\tsum % 7 = \(sum) % 7 = \(yearDoomsday.rawValue) -> \(yearDoomsday)",
-    ])
-
-    let monthDoomsdate = month.calcDoomsday(year: year)
-    let mnemonic = "\(month.rawValue)/\(monthDoomsdate)"
-    paragraphs.append([
-        "For \(month), its mnemonic \(mnemonic) tells us its doomsday falls on \(yearDoomsday) the "
-            + "\(monthDoomsdate.ordinal).",
-    ])
-
-    let difference = day.differenceFrom(monthDoomsdate)
-    paragraphs.append([
-        "Taking the difference from the doomsday, we get "
-            + "\(max(day, monthDoomsdate)) - \(min(day, monthDoomsdate)) = \(difference).",
-    ])
-
-    let daySum = difference + yearDoomsday.rawValue
-    let weekdayIndex = daySum % 7
-    paragraphs.append([
-        "The doomsday is a \(yearDoomsday) -> \(yearDoomsday.rawValue), so "
-            + "\(difference) + \(yearDoomsday.rawValue) = \(daySum) and "
-            + "\(daySum) % 7 = \(weekdayIndex) -> \(Weekday(rawValue: weekdayIndex)!).",
-    ])
-
-    paragraphs.append([
-        "Therefore, the \(day.ordinal) of \(month), \(year) "
-            + "falls on a \(calcWeekday(date)).",
-    ])
-
-    return paragraphs
+    return [
+        [
+            "The century anchor for the \(century.ordinal) century is \(yearAnchor.rawValue) -> \(yearAnchor).",
+        ],
+        [
+            "The dooms-weekday for \(year) can be calculated with the sum of 4 components:",
+            "\t1. century anchor = \(yearAnchor.rawValue)",
+            "\t2. yy = \(year) % 100 = \(last2Digits) => yy / 12 = \(last2Digits) / 12 = \(last2Digits / 12)",
+            "\t3. rem = yy % 12 = \(last2Digits) % 12 = \(remainder)",
+            "\t4. rem / 4 = \(remainder) / 4 = \(remainder / 4)",
+            "\tsum = \(yearAnchor.rawValue) + \(last2Digits / 12) + \(remainder) + \(remainder / 4) = \(sum)",
+            "\tsum % 7 = \(sum) % 7 = \(doomsday.rawValue) -> \(doomsday)",
+        ],
+        [
+            "For \(month), its mnemonic \(mnemonic) tells us its doomsday falls on \(doomsday) the "
+                + "\(doomsdate.ordinal).",
+        ],
+        [
+            "Taking the difference from the doomsday, we get "
+                + "\(max(day, doomsdate)) - \(min(day, doomsdate)) = \(difference).",
+        ],
+        [
+            "The doomsday is a \(doomsday) -> \(doomsday.rawValue), so "
+                + "\(difference) + \(doomsday.rawValue) = \(daySum) and "
+                + "\(daySum) % 7 = \(weekdayIndex) -> \(Weekday(rawValue: weekdayIndex)!).",
+        ],
+        [
+            "Therefore, the \(day.ordinal) of \(month), \(year) "
+                + "falls on a \(calcWeekday(date)).",
+        ],
+    ]
 }
 
 @main
@@ -161,11 +168,11 @@ struct doomsday {
             }
 
             print()
+
             for paragraph in produceSteps(date: date) {
                 paragraph.forEach { print($0) }
                 print()
             }
-            print()
         }
     }
 }
