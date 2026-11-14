@@ -5,7 +5,12 @@ I originally implemented this idea in [Haskell](https://github.com/KojoBailey/do
 
 My aim is to make the most out of Swift's features to write as clean code as is not too tedious to set up. In particular, I'm writing Swift with languages like C++, C#, Mojo, and Rust in mind for comparison.
 
-## Example
+## Usage
+Run the `doosmday` executable and it will prompt you to enter a date of the format `YYYY-MM-DD` - e.g., 2006-07-17 for the 17th of July, 2006 - and any invalid dates will be rejeted with a short description of what's wrong. The program will then output an explanation of the steps to calculate the day of the week for that day.
+
+To quit the program normally, enter `q` or `quit` instead of a date.
+
+### Example
 ```
 Enter a date [YYYY-MM-DD]: 2006-07-17
 
