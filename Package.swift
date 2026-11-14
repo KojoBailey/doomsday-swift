@@ -8,9 +8,6 @@ let package = Package(
     targets: [
         .executableTarget(
             name: "doomsday",
-            swiftSettings: [
-                .enableUpcomingFeature("ApproachableConcurrency"),
-            ],
         ),
         .testTarget(
             name: "doomsdayTests",
