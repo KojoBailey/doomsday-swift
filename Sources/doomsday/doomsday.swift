@@ -132,6 +132,49 @@ struct Date: Equatable {
     let year: UInt
     let month: Month
     let day: UInt
+
+    init(_ string: String) throws {
+        guard string.count == 10 else {
+            throw ErrorString("Expected 10 chars, but got \(string.count).") }
+        guard [4,7].allSatisfy({ string[$0] == "-" }) else {
+            throw ErrorString("Hyphens (-) are not used to separate fields correctly.") }
+
+        let yearDigits = string.prefix(4).compactMap(\.uint)
+        guard yearDigits.count == 4 else {
+            throw ErrorString("Year is invalid. Should be of format YYYY with 4 digits.") }
+        year = yearDigits.reduce(0) { acc, x in acc * 10 + x }
+
+        let monthDigits = string.dropFirst(5).prefix(2).compactMap(\.uint)
+        guard monthDigits.count == 2 else {
+            throw ErrorString("Month is invalid. Should be of format MM with 2 digits.") }
+        let monthIndex = monthDigits.reduce(0) { acc, x in acc * 10 + x }
+        guard monthIndex >= 1 && monthIndex <= 12 else {
+            throw ErrorString("Month is out of bounds. Should be between 01 and 12.") }
+        month = Month(rawValue: monthIndex)!
+
+        let dayDigits = string.dropFirst(8).prefix(2).compactMap(\.uint)
+        guard dayDigits.count == 2 else {
+            throw ErrorString("Day is invalid. Should be of format DD with 2 digits.") }
+        day = dayDigits.reduce(0) { acc, x in acc * 10 + x }
+        guard day != 0 else {
+            throw ErrorString("Day cannot be 00.") }
+        switch month {
+        case .January, .March, .May, .July, .August, .October, .December:
+            guard day <= 31 else {
+                throw ErrorString("\(month) has at most 31 days.") }
+        case .April, .June, .September, .November:
+            guard day <= 30 else {
+                throw ErrorString("\(month) has at most 30 days.") }
+        case .February:
+            if year.isDivisibleBy(4) {
+                guard day <= 29 else {
+                    throw ErrorString("\(month) on a leap year has at most 29 days.") }
+            } else {
+                guard day <= 28 else {
+                    throw ErrorString("\(month) on a non-leap year has at most 28 days.") }
+            }
+        }
+    }
 }
 
 func calcWeekday(year: UInt, month: Month, day: UInt) -> Weekday {
@@ -149,53 +192,53 @@ struct ErrorString: Error, CustomStringConvertible {
     init(_ description: String) { self.description = description }
 }
 
-func parseDate(_ date: String) throws -> Date {
-    guard date.count == 10 else {
-        throw ErrorString("Expected 10 chars, but got \(date.count).") }
-    guard [4,7].allSatisfy({ date[$0] == "-" }) else {
-        throw ErrorString("Hyphens (-) are not used to separate fields correctly.") }
+func printSteps(date: Date) {
+    let (year, month, day) = (date.year, date.month, date.day)
 
-    let yearDigits = date.prefix(4).compactMap(\.uint)
-    guard yearDigits.count == 4 else {
-        throw ErrorString("Year is invalid. Should be of format YYYY with 4 digits.") }
-    let year: UInt = yearDigits.reduce(0) { acc, x in acc * 10 + x }
+    let century = yearToCentury(year)
+    let yearAnchor = calcYearAnchor(year)
+    print("The century anchor for the \(century)\(century.ordinalSuffix) century is "
+        + "\(yearAnchor.rawValue) -> \(yearAnchor).")
 
-    let monthDigits = date.dropFirst(5).prefix(2).compactMap(\.uint)
-    guard monthDigits.count == 2 else {
-        throw ErrorString("Month is invalid. Should be of format MM with 2 digits.") }
-    let monthIndex = monthDigits.reduce(0) { acc, x in acc * 10 + x }
-    guard monthIndex >= 1 && monthIndex <= 12 else {
-        throw ErrorString("Month is out of bounds. Should be between 01 and 12.") }
-    let month = Month(rawValue: monthIndex)!
+    print()
 
-    let dayDigits = date.dropFirst(8).prefix(2).compactMap(\.uint)
-    guard dayDigits.count == 2 else {
-        throw ErrorString("Day is invalid. Should be of format DD with 2 digits.") }
-    let day = dayDigits.reduce(0) { acc, x in acc * 10 + x }
-    guard day != 0 else {
-        throw ErrorString("Day cannot be 00.") }
-    switch month {
-    case .January, .March, .May, .July, .August, .October, .December:
-        guard day <= 31 else {
-            throw ErrorString("\(month) has at most 31 days.") }
-    case .April, .June, .September, .November:
-        guard day <= 30 else {
-            throw ErrorString("\(month) has at most 30 days.") }
-    case .February:
-        if year.isDivisibleBy(4) {
-            guard day <= 29 else {
-                throw ErrorString("\(month) on a leap year has at most 29 days.") }
-        } else {
-            guard day <= 28 else {
-                throw ErrorString("\(month) on a non-leap year has at most 28 days.") }
-        }
-    }
+    print("The dooms-weekday for \(year) can be calculated with the sum of 4 components:")
+    print("\t1. century anchor = \(yearAnchor.rawValue)")
+    let last2Digits = year.modulo(100)
+    print("\t2. yy = \(year) % 100 = \(last2Digits) => yy / 12 = \(last2Digits) / 12 = \(last2Digits / 12)")
+    let remainder = last2Digits % 12
+    print("\t3. rem = yy % 12 = \(last2Digits) % 12 = \(remainder)")
+    print("\t4. rem / 4 = \(remainder) / 4 = \(remainder / 4)")
+    let sum = yearAnchor.rawValue + (last2Digits / 12) + remainder + (remainder / 4)
+    print("\tsum = \(yearAnchor.rawValue) + \(last2Digits / 12) + \(remainder) + \(remainder / 4) = \(sum)")
+    let yearDoomsday: Weekday = calcYearDoomsday(year)
+    print("\tsum % 7 = \(sum) % 7 = \(yearDoomsday.rawValue) -> \(yearDoomsday)")
 
-    return Date(
-        year: year,
-        month: month,
-        day: day,
-    );
+    print()
+
+    let monthDoomsdate = month.calcDoomsday(year: year)
+    let mnemonic = "\(month.rawValue)/\(monthDoomsdate)"
+    print("For \(month), its mnemonic \(mnemonic) tells us its doomsday falls on \(yearDoomsday) the "
+        + "\(monthDoomsdate)\(monthDoomsdate.ordinalSuffix).")
+
+    print()
+
+    let difference = day.differenceFrom(monthDoomsdate)
+    print("Taking the difference from the doomsday, we get "
+        + "\(max(day, monthDoomsdate)) - \(min(day, monthDoomsdate)) = \(difference).")
+
+    print()
+
+    let daySum = difference + yearDoomsday.rawValue
+    let weekdayIndex = daySum % 7
+    print("The doomsday is a \(yearDoomsday) -> \(yearDoomsday.rawValue), so "
+        + "\(difference) + \(yearDoomsday.rawValue) = \(daySum) and "
+        + "\(daySum) % 7 = \(weekdayIndex) -> \(Weekday(rawValue: weekdayIndex)!).")
+
+    print()
+
+    print("Therefore, the \(day)\(day.ordinalSuffix) of \(month), \(year) "
+        + "falls on a \(calcWeekday(date)).")
 }
 
 @main
@@ -213,24 +256,15 @@ struct doomsday {
 
             let date: Date
             do {
-                date = try parseDate(userResponse)
+                date = try Date(userResponse)
             } catch {
                 print("Invalid date format. Reason: \(error)")
                 continue
             }
-            let (year, month, day) = (date.year, date.month, date.day)
 
-            let century = yearToCentury(year)
-            print("The century anchor for the \(century)\(century.ordinalSuffix) century is "
-                + "\(calcYearAnchor(year)).")
-            
-            print("The dooms-weekday for \(year) is \(calcYearDoomsday(year)).")
-            
-            print("For \(month), its doomsday falls on the "
-                + "\(month.calcDoomsday(year: year))\(day.ordinalSuffix).")
-
-            print("Therefore, the \(day)\(day.ordinalSuffix) of \(month), \(year) "
-                + "falls on a \(calcWeekday(date)).")
+            print()
+            printSteps(date: date)
+            print()
         }
     }
 }
