@@ -203,7 +203,13 @@ struct doomsday {
     static func main() {
         while true {
             print("Enter a date [YYYY-MM-DD]: ", terminator: "")
-            guard let userResponse = readLine() else { break }
+            guard let userResponse: String = readLine() else {
+                break
+            }
+
+            if ["q", "quit"].contains(userResponse) {
+                break
+            }
 
             let date: Date
             do {
