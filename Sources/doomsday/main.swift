@@ -149,6 +149,10 @@ func produceSteps(date: Date) -> [[String]] {
 @main
 struct doomsday {
     static func main() {
+        print("== DOOMSDAY CALCULATOR ==")
+        print("     by Kojo Bailey      ")
+        print()
+
         while true {
             print("Enter a date [YYYY-MM-DD]: ", terminator: "")
             guard let userResponse: String = readLine() else {
